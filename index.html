@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>속안심내과 | 오지혜 원장님 외래진료 예약</title>
+  <meta name="description" content="속안심내과 오지혜 원장님 외래진료 예약" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="brand">속안심내과</div>
+      <h1>오지혜 원장님<br />외래진료 예약</h1>
+      <p>예약 신청과 기존 예약 확인·변경·취소를 할 수 있습니다.</p>
+    </section>
+
+    <section class="card">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="new" type="button">예약 신청</button>
+        <button class="tab" data-tab="lookup" type="button">예약 확인</button>
+      </div>
+
+      <div id="notice" class="notice hidden" aria-live="polite"></div>
+
+      <section id="panel-new" class="panel active">
+        <div class="section-title">
+          <h2>예약 신청</h2>
+          <p>성함과 휴대폰 번호 뒤 4자리를 입력해 주세요.</p>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>환자명</span>
+            <input id="new-name" type="text" maxlength="30" autocomplete="name" placeholder="예: 홍길동" />
+          </label>
+          <label>
+            <span>휴대폰 뒤 4자리</span>
+            <input id="new-phone" type="tel" inputmode="numeric" maxlength="4" autocomplete="tel" placeholder="예: 1234" />
+          </label>
+        </div>
+
+        <button id="new-start" class="primary" type="button">예약 날짜 선택</button>
+
+        <div id="new-picker" class="picker hidden">
+          <div class="picker-head">
+            <button id="new-prev" class="icon-btn" type="button" aria-label="이전 달">‹</button>
+            <strong id="new-month-label"></strong>
+            <button id="new-next" class="icon-btn" type="button" aria-label="다음 달">›</button>
+          </div>
+
+          <div class="weekdays">
+            <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+          </div>
+          <div id="new-calendar" class="calendar"></div>
+
+          <div id="new-times-wrap" class="times-wrap hidden">
+            <h3 id="new-selected-date"></h3>
+            <div id="new-times" class="times"></div>
+          </div>
+
+          <button id="new-submit" class="primary hidden" type="button">이 시간으로 예약하기</button>
+        </div>
+      </section>
+
+      <section id="panel-lookup" class="panel">
+        <div class="section-title">
+          <h2>예약 확인</h2>
+          <p>예약 시 입력한 성함과 휴대폰 번호 뒤 4자리를 입력해 주세요.</p>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>환자명</span>
+            <input id="lookup-name" type="text" maxlength="30" autocomplete="name" placeholder="예: 홍길동" />
+          </label>
+          <label>
+            <span>휴대폰 뒤 4자리</span>
+            <input id="lookup-phone" type="tel" inputmode="numeric" maxlength="4" autocomplete="tel" placeholder="예: 1234" />
+          </label>
+        </div>
+
+        <button id="lookup-btn" class="primary" type="button">예약 확인하기</button>
+
+        <div id="lookup-results" class="results hidden"></div>
+
+        <div id="change-picker" class="picker hidden">
+          <div class="picker-title-row">
+            <div>
+              <h3>변경할 날짜와 시간을 선택해 주세요.</h3>
+              <p id="change-original"></p>
+            </div>
+            <button id="change-close" class="text-btn" type="button">닫기</button>
+          </div>
+
+          <div class="picker-head">
+            <button id="change-prev" class="icon-btn" type="button" aria-label="이전 달">‹</button>
+            <strong id="change-month-label"></strong>
+            <button id="change-next" class="icon-btn" type="button" aria-label="다음 달">›</button>
+          </div>
+
+          <div class="weekdays">
+            <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+          </div>
+          <div id="change-calendar" class="calendar"></div>
+
+          <div id="change-times-wrap" class="times-wrap hidden">
+            <h3 id="change-selected-date"></h3>
+            <div id="change-times" class="times"></div>
+          </div>
+
+          <button id="change-submit" class="primary hidden" type="button">예약 변경하기</button>
+        </div>
+      </section>
+    </section>
+
+    <footer>
+      <strong>속안심내과</strong>
+      <span>예약 변경 및 취소는 예약 확인 메뉴에서 가능합니다.</span>
+    </footer>
+  </main>
+
+  <div id="loading" class="loading hidden" aria-live="polite">
+    <div class="spinner"></div>
+    <span>잠시만 기다려 주세요.</span>
+  </div>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>
