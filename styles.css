@@ -19,14 +19,17 @@ body{
 }
 button,input,textarea{font:inherit}
 .page{width:min(100%,780px);min-height:100vh;margin:auto;padding:28px 20px 50px}
-.topbar,.brand,.doctor,.title,.calendar-head,.action-row{display:flex;align-items:center}
+.topbar,.doctor,.title,.calendar-head,.action-row{display:flex;align-items:center}
 .topbar,.calendar-head{justify-content:space-between}
-.brand{gap:12px}
-.brand strong,.brand small,.doctor span,.doctor strong,.doctor p{display:block}
-.brand strong{font-size:21px}
-.brand small{margin-top:4px;color:var(--gray);font-size:10px;letter-spacing:1.5px}
-.cross{display:grid;width:48px;height:48px;place-items:center;color:#fff;font-size:32px;border-radius:14px;background:linear-gradient(145deg,#2d4778,#112344)}
 .badge{padding:10px 15px;color:#8d6331;font-weight:700;border:1px solid var(--line);border-radius:30px;background:#ffffffb8}
+.image-topbar{gap:12px}
+.topbar-logo{
+  height:72px;
+  width:auto;
+  max-width:min(100%, 360px);
+  object-fit:contain;
+  display:block;
+}
 .hero,.card,.success{border:1px solid #e3dacfcc;background:#fffffff2;box-shadow:0 14px 40px #2329330f}
 .hero{margin-top:28px;padding:38px;border-radius:32px;background:linear-gradient(135deg,#fffffff0,#fff7e9e8)}
 .hero.compact{padding-bottom:30px}
@@ -34,30 +37,26 @@ button,input,textarea{font:inherit}
 h1{margin:0;color:var(--navy);font-size:clamp(34px,7vw,52px);letter-spacing:-2px;line-height:1.18}
 .intro{margin:20px 0 28px;color:#5f6673;line-height:1.75}
 .doctor{gap:17px;padding-top:24px;border-top:1px solid var(--line)}
+.logo-doctor{align-items:center}
 .doctor-mark{
   display:grid;
-  width:72px;
-  height:72px;
+  width:96px;
+  height:96px;
   place-items:center;
-  border-radius:22px;
-  background:#ffffff;
-  border:1px solid #e6ddd1;
+  border-radius:24px;
+  background:#fffdf8;
+  border:1px solid #eadfce;
   overflow:hidden;
 }
-
 .doctor-mark img{
-  width:100%;
-  height:100%;
+  width:82%;
+  height:82%;
   object-fit:contain;
-  padding:8px;
+  display:block;
 }
-
-.logo-mark{
-  background:#ffffff;
-}
-.doctor span{color:#9a7551;font-size:13px}
-.doctor strong{margin-top:5px;color:var(--navy);font-size:24px}
-.doctor p{margin:6px 0 0;color:var(--gray)}
+.doctor span{display:block;color:#9a7551;font-size:13px}
+.doctor strong{display:block;margin-top:5px;color:var(--navy);font-size:24px}
+.doctor p{display:block;margin:6px 0 0;color:var(--gray)}
 form{margin-top:0}
 .card{margin-top:22px;padding:30px;border-radius:28px;overflow:hidden}
 .title{gap:12px;margin-bottom:25px}
@@ -69,8 +68,6 @@ input,textarea{display:block;width:100%;margin-top:10px;padding:0 16px;border:1p
 input{height:57px}
 textarea{min-height:114px;padding-top:15px;padding-bottom:15px;resize:vertical}
 input:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 4px #c7964d1f}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
-.form-grid label:last-child{grid-column:1/-1}
 .calendar{padding:18px;border:1px solid #e1d8ca;border-radius:20px;background:#fffefb}
 .calendar-head{margin-bottom:14px}
 .calendar-head strong{font-size:19px}
@@ -122,8 +119,6 @@ footer{padding:35px 0 5px;color:#8f9299;font-size:13px;text-align:center}
 .reservation-item{padding:20px;border:1px solid #e6ddd1;border-radius:20px;background:#fffaf4}
 .reservation-item .action-row{margin-top:16px}
 .selected-reservation{margin:-5px 0 22px;padding:15px 18px;color:var(--navy);font-weight:800;border:1px solid #e6ddd1;border-radius:14px;background:#faf6ee}
-
-/* 처리 중 표시 */
 .loading{
   position:fixed;
   inset:0;
@@ -147,17 +142,27 @@ footer{padding:35px 0 5px;color:#8f9299;font-size:13px;text-align:center}
   animation:spin .75s linear infinite
 }
 @keyframes spin{to{transform:rotate(360deg)}}
-
 @media(max-width:600px){
   .page{padding:22px 16px 40px}
-  .brand strong{font-size:18px}
-  .brand small{font-size:8px}
-  .cross{width:42px;height:42px}
+  .topbar{
+    align-items:flex-start;
+    gap:10px;
+  }
+  .topbar-logo{
+    height:58px;
+    max-width:250px;
+  }
   .badge{padding:8px 11px;font-size:12px}
   .hero{padding:30px 24px}
   .card{padding:26px 20px}
-  .form-grid{grid-template-columns:1fr}
-  .form-grid label:last-child{grid-column:auto}
+  .doctor{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .doctor-mark{
+    width:84px;
+    height:84px;
+  }
   .calendar{padding:14px 10px}
   .week,.days{gap:4px}
   .day{font-size:13px}
