@@ -1,27 +1,16 @@
-속안심내과 오지혜 원장님 외래예약 V2
+속안심내과 오지혜 원장님 외래예약 V2 - 기존 디자인 복원본
 
-파일 구성
-- index.html : 환자 화면
-- styles.css : 디자인
-- app.js : 예약 신청/조회/변경/취소
-- api/booking.js : Vercel 서버에서 Apps Script로 연결
-- vercel.json : Vercel 함수 설정
-- .env.example : 필요한 환경변수 이름
+운영 구조
+- 직원: Google Sheets '예약관리' 시트에서 신규 예약 등록
+- 환자: 예약 확인 / 변경 / 취소만 가능
+- 환자 신규 예약 기능 없음
 
-중요
-PATIENT_API_KEY를 index.html 또는 app.js에 직접 넣지 마세요.
-비밀키는 Vercel 환경변수에만 입력합니다.
+디자인
+- 기존 booking 화면의 네이비 + 골드 + 아이보리 톤 복원
+- 기존 상단 속안심내과 로고형 헤더, 오지혜 원장님 카드, 번호형 섹션 디자인 유지
 
 Vercel 환경변수
-1) GOOGLE_SCRIPT_URL
-   Apps Script 웹 앱 URL 전체
+- GOOGLE_SCRIPT_URL
+- PATIENT_API_KEY
 
-2) PATIENT_API_KEY
-   Apps Script의 showPatientApiKey 실행 로그에서 확인한 키
-
-배포 후 확인
-- 첫 화면에서 예약 신청 탭이 보이는지
-- 환자명/휴대폰 뒤 4자리 입력 후 달력이 열리는지
-- 설정 시트의 진료시간/점심시간/휴진일이 반영되는지
-- 예약 후 예약관리 시트에 한 줄이 추가되는지
-- 예약 확인/변경/취소가 동작하는지
+GitHub에서 기존 프로젝트 파일을 이 폴더 내용으로 교체한 뒤 커밋하면 Vercel이 자동 재배포됩니다.

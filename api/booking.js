@@ -1,5 +1,5 @@
 const ALLOWED_GET = new Set(["health", "settings", "availability"]);
-const ALLOWED_POST = new Set(["lookup", "create", "change", "cancel"]);
+const ALLOWED_POST = new Set(["lookup", "change", "cancel"]);
 
 module.exports = async function handler(req, res) {
   try {
