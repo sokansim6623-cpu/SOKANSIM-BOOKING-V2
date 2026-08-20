@@ -34,7 +34,27 @@ button,input,textarea{font:inherit}
 h1{margin:0;color:var(--navy);font-size:clamp(34px,7vw,52px);letter-spacing:-2px;line-height:1.18}
 .intro{margin:20px 0 28px;color:#5f6673;line-height:1.75}
 .doctor{gap:17px;padding-top:24px;border-top:1px solid var(--line)}
-.doctor-mark{display:grid;width:72px;height:72px;place-items:center;color:#fff;font-size:22px;font-weight:900;letter-spacing:.5px;border-radius:22px;background:linear-gradient(145deg,#2d4778,#112344);box-shadow:inset 0 0 0 5px #ffffff18}
+.doctor-mark{
+  display:grid;
+  width:72px;
+  height:72px;
+  place-items:center;
+  border-radius:22px;
+  background:#ffffff;
+  border:1px solid #e6ddd1;
+  overflow:hidden;
+}
+
+.doctor-mark img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:8px;
+}
+
+.logo-mark{
+  background:#ffffff;
+}
 .doctor span{color:#9a7551;font-size:13px}
 .doctor strong{margin-top:5px;color:var(--navy);font-size:24px}
 .doctor p{margin:6px 0 0;color:var(--gray)}
