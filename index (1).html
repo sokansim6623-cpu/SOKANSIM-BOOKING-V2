@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>외래진료 예약 확인 | 속안심내과</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main class="page">
+  <header class="topbar text-topbar">
+    <div class="hospital-brand-text">
+      <strong>속안심내과</strong>
+      <small>SOKANSIM INTERNAL MEDICINE</small>
+    </div>
+    <span class="badge">예약 확인</span>
+  </header>
+
+  <section class="hero compact">
+    <p class="eyebrow">외래진료 예약</p>
+    <h1>예약 확인 · 변경 · 취소</h1>
+    <p class="intro">병원에서 안내받은 예약을 확인하고, 필요한 경우 예약 일정을 변경하거나 취소할 수 있습니다.</p>
+    <div class="doctor logo-doctor">
+      <div class="doctor-mark logo-panel">
+        <img src="/logo-symbol.png" alt="속안심내과 심볼">
+      </div>
+      <div>
+        <span id="doctorCardLabel">속안심내과</span>
+        <strong id="doctorCardName">외래 진료예약</strong>
+      </div>
+    </div>
+  </section>
+
+  <section id="lookupCard" class="card">
+    <div class="title"><span>01</span><h2>본인 확인</h2></div>
+    <form id="lookupForm">
+      <label>
+        성함 *
+        <input id="patientName" type="text" maxlength="20" autocomplete="name" placeholder="성함을 입력해 주세요" required>
+      </label>
+      <label>
+        휴대전화번호 뒤 4자리 *
+        <input id="phoneLast4" type="text" maxlength="4" inputmode="numeric" autocomplete="tel" placeholder="예: 1234" required>
+        <small>예약 등록 시 입력한 번호의 뒤 4자리</small>
+      </label>
+      <p id="lookupError" class="error"></p>
+      <button id="lookupButton" class="submit" type="submit">예약 확인하기 <span>→</span></button>
+    </form>
+  </section>
+
+  <section id="reservationCard" class="card hidden">
+    <div class="title"><span>02</span><h2>예약 정보</h2></div>
+    <p class="guide reservation-guide">오늘을 포함해 앞으로의 예약만 표시됩니다. 예약이 여러 건이면 변경하거나 취소할 예약을 선택해 주세요.</p>
+    <div id="reservationList" class="reservation-list"></div>
+  </section>
+
+  <section id="changeCard" class="card hidden">
+    <div class="title"><span>03</span><h2>예약 일정 변경</h2></div>
+    <div id="changeCurrentSummary" class="selected-reservation"></div>
+
+    <label>변경할 날짜 *</label>
+
+    <div class="calendar">
+      <div class="calendar-head">
+        <button type="button" id="previousMonth">‹</button>
+        <strong id="calendarTitle"></strong>
+        <button type="button" id="nextMonth">›</button>
+      </div>
+      <div class="week">
+        <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+      </div>
+      <div id="calendarDays" class="days"></div>
+    </div>
+
+    <input type="hidden" id="appointmentDate">
+    <p id="dateGuide" class="guide">회색 날짜는 휴진일 또는 예약 불가일입니다.</p>
+
+    <div id="timeArea" class="empty">먼저 날짜를 선택해 주세요.</div>
+
+    <p id="changeError" class="error"></p>
+
+    <div class="action-row">
+      <button id="changeSubmitButton" class="submit inline" type="button">변경 확정</button>
+      <button id="changeCloseButton" class="secondary" type="button">돌아가기</button>
+    </div>
+  </section>
+
+  <section id="cancelCard" class="card hidden">
+    <div class="title"><span>03</span><h2>예약 취소</h2></div>
+
+    <div class="warning-box">
+      <strong>예약을 취소하시겠습니까?</strong>
+      <p id="cancelSummary">-</p>
+      <small>취소 후 다시 예약이 필요하시면 병원으로 문의해 주세요.</small>
+    </div>
+
+    <p id="cancelError" class="error"></p>
+
+    <div class="action-row">
+      <button id="cancelSubmitButton" class="danger" type="button">예약 취소하기</button>
+      <button id="cancelCloseButton" class="secondary" type="button">예약 유지</button>
+    </div>
+  </section>
+
+  <section id="successCard" class="success hidden">
+    <div class="check">✓</div>
+    <h2 id="successTitle">처리가 완료되었습니다.</h2>
+    <div id="successSummary" class="summary"></div>
+    <button id="restartButton" class="secondary restart" type="button">예약 다시 확인하기</button>
+  </section>
+
+  <footer>환자를 위한 진심, 속안심내과</footer>
+</main>
+
+<div id="loading" class="loading hidden">
+  <div class="spinner"></div>
+  <span>잠시만 기다려 주세요.</span>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

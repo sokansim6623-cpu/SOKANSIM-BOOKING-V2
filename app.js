@@ -304,6 +304,14 @@ function renderReservations() {
     reservationList.appendChild(item);
   });
 
+  // 조회하면 위 카드에 이 환자의 담당 선생님 표시
+  const cardLabel = document.getElementById("doctorCardLabel");
+  const cardName = document.getElementById("doctorCardName");
+  if (cardLabel && cardName) {
+    cardLabel.textContent = "담당 의료진";
+    cardName.textContent = Array.from(new Set(reservations.map(doctorOf))).join(" · ");
+  }
+
   const guide = document.querySelector(".reservation-guide");
   if (guide) {
     const doctors = Array.from(new Set(reservations.map(doctorOf)));
