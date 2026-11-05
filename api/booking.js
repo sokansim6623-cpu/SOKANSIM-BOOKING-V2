@@ -1,10 +1,15 @@
 const ALLOWED_GET = new Set(["health", "settings", "availability"]);
 const ALLOWED_POST = new Set(["lookup", "change", "cancel"]);
 
+// 세 분(오지혜·박철연 원장님, 박준우 과장님) 통합 예약DB 연결
+// Vercel 환경변수: OUTPATIENT_GAS_URL / OUTPATIENT_API_KEY
+// (예전 GOOGLE_SCRIPT_URL / PATIENT_API_KEY 는 더 이상 쓰지 않음)
+const safeId = (v, max) => String(v || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, max);
+
 module.exports = async function handler(req, res) {
   try {
-    const scriptUrl = process.env.GOOGLE_SCRIPT_URL;
-    const apiKey = process.env.PATIENT_API_KEY;
+    const scriptUrl = process.env.OUTPATIENT_GAS_URL;
+    const apiKey = process.env.OUTPATIENT_API_KEY;
 
     if (!scriptUrl || !apiKey) {
       return res.status(500).json({
@@ -43,6 +48,20 @@ module.exports = async function handler(req, res) {
         }
 
         url.searchParams.set("month", month);
+
+        // 어느 선생님 달력인지 + 본인 예약은 빈 시간으로 계산
+        const doctor = safeId(req.query.doctor, 30);
+        if (!doctor) {
+          return res.status(400).json({ ok: false, error: "invalid_doctor" });
+        }
+        url.searchParams.set("doctor", doctor);
+        const excludeId = safeId(req.query.excludeId, 60);
+        if (excludeId) url.searchParams.set("excludeId", excludeId);
+      }
+
+      if (action === "settings") {
+        const doctor = safeId(req.query.doctor, 30);
+        if (doctor) url.searchParams.set("doctor", doctor);
       }
 
       return await forwardJson(url.toString(), {
@@ -268,6 +287,7 @@ async function verifyMutation(
         String(body.appointmentTime || "");
 
       return reservations.some((item) =>
+        (!body.id || String(item.id || "") === String(body.id)) &&
         String(item.appointmentDate || "") === newDate &&
         String(item.appointmentTime || "") === newTime
       );
@@ -282,8 +302,10 @@ async function verifyMutation(
         String(body.originalTime || "");
 
       return !reservations.some((item) =>
-        String(item.appointmentDate || "") === oldDate &&
-        String(item.appointmentTime || "") === oldTime
+        (body.id
+          ? String(item.id || "") === String(body.id)
+          : String(item.appointmentDate || "") === oldDate &&
+            String(item.appointmentTime || "") === oldTime)
       );
     }
 

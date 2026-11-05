@@ -50,6 +50,11 @@ let monthAvailability = {};
 
 const pad = (n) => String(n).padStart(2, "0");
 
+// 예약마다 담당 선생님 (세 분 통합)
+const doctorOf = (r) => (r && r.doctorName) || "담당 의료진";
+const escapeHtml = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
 function toKey(date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
@@ -102,6 +107,27 @@ function friendlyError(error) {
   if (message.includes("slot_unavailable")) {
     return "방금 다른 예약이 등록된 시간입니다. 다른 시간을 선택해 주세요.";
   }
+  if (message.includes("closed_date")) {
+    return "휴진일에는 예약할 수 없습니다. 다른 날짜를 선택해 주세요.";
+  }
+  if (message.includes("invalid_slot")) {
+    return "해당 날짜에 운영하지 않는 예약 시간입니다.";
+  }
+  if (message.includes("past_time")) {
+    return "이미 지난 시간입니다. 다른 시간을 선택해 주세요.";
+  }
+  if (message.includes("date_out_of_range")) {
+    return "변경 가능한 날짜 범위를 확인해 주세요.";
+  }
+  if (message.includes("too_many_requests")) {
+    return "조회 시도가 많습니다. 10분 뒤에 다시 시도해 주세요.";
+  }
+  if (message.includes("invalid_doctor")) {
+    return "담당 의료진 정보를 확인하지 못했습니다. 병원으로 문의해 주세요.";
+  }
+  if (message.includes("missing_environment") || message.includes("upstream")) {
+    return "예약 시스템에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.";
+  }
   if (message.includes("not_found")) {
     return "확인되는 예약이 없습니다.";
   }
@@ -152,15 +178,16 @@ async function apiPost(body) {
 }
 
 async function ensureSettings() {
-  if (settings) return settings;
+  const doctor = currentReservation ? currentReservation.doctor || "" : "";
+  if (settings && settings._doctor === doctor) return settings;
 
-  const result = await apiGet({ action: "settings" });
+  const result = await apiGet({ action: "settings", doctor });
 
   if (!result.ok) {
     throw new Error(result.error || "설정 정보를 불러오지 못했습니다.");
   }
 
-  settings = result.settings;
+  settings = Object.assign({}, result.settings, { _doctor: doctor });
   return settings;
 }
 
@@ -246,7 +273,8 @@ function renderReservations() {
     nameBlock.querySelector("strong").textContent = reservation.patientName;
 
     const doctorBlock = document.createElement("div");
-    doctorBlock.innerHTML = `<span>담당 의료진</span><strong>오지혜 원장님</strong>`;
+    doctorBlock.innerHTML = `<span>담당 의료진</span><strong></strong>`;
+    doctorBlock.querySelector("strong").textContent = doctorOf(reservation);
 
     const dateBlock = document.createElement("div");
     dateBlock.className = "wide";
@@ -276,6 +304,14 @@ function renderReservations() {
     reservationList.appendChild(item);
   });
 
+  const guide = document.querySelector(".reservation-guide");
+  if (guide) {
+    const doctors = Array.from(new Set(reservations.map(doctorOf)));
+    guide.textContent = reservations.length > 1
+      ? `예약이 ${reservations.length}건 있습니다${doctors.length > 1 ? " (" + doctors.join(", ") + ")" : ""}. 변경하거나 취소할 예약을 선택해 주세요.`
+      : "오늘을 포함해 앞으로의 예약만 표시됩니다.";
+  }
+
   reservationCard.classList.remove("hidden");
   changeCard.classList.add("hidden");
   cancelCard.classList.add("hidden");
@@ -297,7 +333,7 @@ async function openChange(index) {
   successCard.classList.add("hidden");
 
   changeCurrentSummary.textContent =
-    `현재 예약: ${formatDate(currentReservation.appointmentDate)} ${currentReservation.appointmentTime}`;
+    `현재 예약: ${formatDate(currentReservation.appointmentDate)} ${currentReservation.appointmentTime} · ${doctorOf(currentReservation)}`;
 
   dateInput.value = "";
   selectedTime = "";
@@ -335,7 +371,7 @@ function openCancel(index) {
   successCard.classList.add("hidden");
 
   cancelSummary.textContent =
-    `${formatDate(currentReservation.appointmentDate)} ${currentReservation.appointmentTime} · 오지혜 원장님`;
+    `${formatDate(currentReservation.appointmentDate)} ${currentReservation.appointmentTime} · ${doctorOf(currentReservation)}`;
 
   cancelCard.scrollIntoView({
     behavior: "smooth",
@@ -356,7 +392,9 @@ async function loadAvailability(monthDate) {
 
   const result = await apiGet({
     action: "availability",
-    month: monthKey
+    month: monthKey,
+    doctor: currentReservation ? currentReservation.doctor || "" : "",
+    excludeId: currentReservation ? currentReservation.id || "" : ""
   });
 
   if (!result.ok) {
@@ -364,6 +402,9 @@ async function loadAvailability(monthDate) {
   }
 
   monthAvailability = result.days || {};
+  if (result.bookingDays) {
+    settings = Object.assign({}, settings || {}, { bookingDays: Number(result.bookingDays) });
+  }
 }
 
 function availableSlotsForDate(dateKey) {
@@ -557,6 +598,7 @@ changeSubmitButton.onclick = async () => {
   try {
     const result = await apiPost({
       action: "change",
+      id: currentReservation.id,
       patientName: currentReservation.patientName,
       phoneLast4: phoneInput.value.trim(),
       originalDate: currentReservation.appointmentDate,
@@ -571,7 +613,7 @@ changeSubmitButton.onclick = async () => {
 
     showSuccess(
       "예약 변경이 완료되었습니다.",
-      `${formatDate(appointmentDate)} ${selectedTime}<br>오지혜 원장님 외래진료`
+      `${escapeHtml(formatDate(appointmentDate))} ${escapeHtml(selectedTime)}<br>${escapeHtml(doctorOf(currentReservation))} 외래진료`
     );
   } catch (error) {
     showError(changeError, friendlyError(error));
@@ -608,6 +650,7 @@ cancelSubmitButton.onclick = async () => {
   try {
     const result = await apiPost({
       action: "cancel",
+      id: currentReservation.id,
       patientName: currentReservation.patientName,
       phoneLast4: phoneInput.value.trim(),
       originalDate: currentReservation.appointmentDate,
@@ -620,7 +663,7 @@ cancelSubmitButton.onclick = async () => {
 
     showSuccess(
       "예약이 취소되었습니다.",
-      `${formatDate(currentReservation.appointmentDate)} ${currentReservation.appointmentTime}<br>오지혜 원장님 외래진료`
+      `${escapeHtml(formatDate(currentReservation.appointmentDate))} ${escapeHtml(currentReservation.appointmentTime)}<br>${escapeHtml(doctorOf(currentReservation))} 외래진료`
     );
   } catch (error) {
     showError(cancelError, friendlyError(error));
